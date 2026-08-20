@@ -1,0 +1,669 @@
+<div class="mx-auto flex w-full max-w-7xl flex-auto flex-col gap-6 p-6 sm:p-8">
+
+    <!-- ENCABEZADO -->
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight">
+                Administración de Libros
+            </h1>
+
+            <p class="mt-1 text-sm text-neutral-500">
+                Gestiona, consulta y administra los libros disponibles en la biblioteca.
+            </p>
+        </div>
+
+        <!-- Propuesta: botón para registrar un nuevo libro -->
+        <button
+            matButton="filled"
+            class="shrink-0">
+
+            <mat-icon
+                svgIcon="plus"
+                class="mr-2">
+            </mat-icon>
+
+            Agregar libro
+        </button>
+
+    </div>
+
+
+    <!-- TARJETAS DE INFORMACIÓN -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+        <!-- Total -->
+        <mat-card
+            appearance="outlined"
+            class="p-5">
+
+            <div class="flex items-center gap-4">
+
+                <div class="flex size-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+
+                    <mat-icon
+                        svgIcon="book-open"
+                        class="text-blue-600">
+                    </mat-icon>
+
+                </div>
+
+                <div>
+
+                    <div class="text-sm text-neutral-500">
+                        Total de libros
+                    </div>
+
+                    <div class="mt-1 text-2xl font-bold">
+                        248
+                    </div>
+
+                </div>
+
+            </div>
+
+        </mat-card>
+
+
+        <!-- Activos -->
+        <mat-card
+            appearance="outlined"
+            class="p-5">
+
+            <div class="flex items-center gap-4">
+
+                <div class="flex size-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+
+                    <mat-icon
+                        svgIcon="circle-check"
+                        class="text-green-600">
+                    </mat-icon>
+
+                </div>
+
+                <div>
+
+                    <div class="text-sm text-neutral-500">
+                        Libros activos
+                    </div>
+
+                    <div class="mt-1 text-2xl font-bold">
+                        231
+                    </div>
+
+                </div>
+
+            </div>
+
+        </mat-card>
+
+
+        <!-- Categorías -->
+        <mat-card
+            appearance="outlined"
+            class="p-5">
+
+            <div class="flex items-center gap-4">
+
+                <div class="flex size-12 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/30">
+
+                    <mat-icon
+                        svgIcon="folder"
+                        class="text-orange-600">
+                    </mat-icon>
+
+                </div>
+
+                <div>
+
+                    <div class="text-sm text-neutral-500">
+                        Categorías
+                    </div>
+
+                    <div class="mt-1 text-2xl font-bold">
+                        12
+                    </div>
+
+                </div>
+
+            </div>
+
+        </mat-card>
+
+
+        <!-- Nuevos -->
+        <mat-card
+            appearance="outlined"
+            class="p-5">
+
+            <div class="flex items-center gap-4">
+
+                <div class="flex size-12 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
+
+                    <mat-icon
+                        svgIcon="book-plus"
+                        class="text-purple-600">
+                    </mat-icon>
+
+                </div>
+
+                <div>
+
+                    <div class="text-sm text-neutral-500">
+                        Agregados este mes
+                    </div>
+
+                    <div class="mt-1 text-2xl font-bold">
+                        18
+                    </div>
+
+                </div>
+
+            </div>
+
+        </mat-card>
+
+    </div>
+
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <mat-card
+        appearance="outlined"
+        class="overflow-hidden">
+
+
+        <!-- BARRA DE HERRAMIENTAS -->
+        <div class="flex flex-col gap-4 border-b border-neutral-200 p-6 dark:border-neutral-700 lg:flex-row lg:items-center">
+
+            <!-- Buscador -->
+            <div class="flex flex-1 items-center gap-3 rounded-lg border border-neutral-300 px-4 py-2.5 dark:border-neutral-600">
+
+                <mat-icon
+                    svgIcon="search"
+                    class="size-5 text-neutral-500">
+                </mat-icon>
+
+                <input
+                    type="text"
+                    placeholder="Buscar por título, autor o ISBN..."
+                    class="w-full border-0 bg-transparent text-sm outline-none"
+                />
+
+            </div>
+
+
+            <!-- Filtro -->
+            <button
+                matButton="outlined"
+                class="shrink-0">
+
+                <mat-icon
+                    svgIcon="filter"
+                    class="mr-2">
+                </mat-icon>
+
+                Filtrar
+
+            </button>
+
+
+            <!-- Categorías -->
+            <button
+                matButton="outlined"
+                class="shrink-0">
+
+                <mat-icon
+                    svgIcon="folder"
+                    class="mr-2">
+                </mat-icon>
+
+                Categorías
+
+            </button>
+
+        </div>
+
+
+        <!-- TÍTULO DE LA TABLA -->
+        <div class="px-6 pt-6">
+
+            <h2 class="text-lg font-semibold">
+                Libros registrados
+            </h2>
+
+            <p class="mt-1 text-sm text-neutral-500">
+                Lista de libros disponibles para administrar.
+            </p>
+
+        </div>
+
+
+        <!-- TABLA -->
+        <div class="mt-4 overflow-x-auto">
+
+            <table class="w-full min-w-[950px]">
+
+                <thead>
+
+                    <tr class="border-b border-neutral-200 dark:border-neutral-700">
+
+                        <th class="px-6 py-4 text-left text-sm font-semibold">
+                            Libro
+                        </th>
+
+                        <th class="px-6 py-4 text-left text-sm font-semibold">
+                            Autor
+                        </th>
+
+                        <th class="px-6 py-4 text-left text-sm font-semibold">
+                            Categoría
+                        </th>
+
+                        <th class="px-6 py-4 text-left text-sm font-semibold">
+                            Año
+                        </th>
+
+                        <th class="px-6 py-4 text-left text-sm font-semibold">
+                            Estado
+                        </th>
+
+                        <th class="px-6 py-4 text-right text-sm font-semibold">
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    <!-- LIBRO 1 -->
+                    <tr class="border-b border-neutral-100 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50">
+
+                        <td class="px-6 py-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+
+                                    <mat-icon
+                                        svgIcon="book-open"
+                                        class="text-blue-600">
+                                    </mat-icon>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="font-medium">
+                                        Cien años de soledad
+                                    </div>
+
+                                    <div class="text-sm text-neutral-500">
+                                        ISBN: 978-0307474728
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            Gabriel García Márquez
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            Literatura
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            1967
+                        </td>
+
+
+                        <td class="px-6 py-4">
+
+                            <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                Activo
+                            </span>
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-right">
+
+                            <button
+                                mat-icon-button
+                                aria-label="Editar libro">
+
+                                <mat-icon svgIcon="pencil"></mat-icon>
+
+                            </button>
+
+                            <button
+                                mat-icon-button
+                                aria-label="Eliminar libro">
+
+                                <mat-icon svgIcon="trash-2"></mat-icon>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- LIBRO 2 -->
+                    <tr class="border-b border-neutral-100 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50">
+
+                        <td class="px-6 py-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
+
+                                    <mat-icon
+                                        svgIcon="book-open"
+                                        class="text-purple-600">
+                                    </mat-icon>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="font-medium">
+                                        El principito
+                                    </div>
+
+                                    <div class="text-sm text-neutral-500">
+                                        ISBN: 978-0156012195
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            Antoine de Saint-Exupéry
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            Infantil
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            1943
+                        </td>
+
+
+                        <td class="px-6 py-4">
+
+                            <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                Activo
+                            </span>
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-right">
+
+                            <button
+                                mat-icon-button
+                                aria-label="Editar libro">
+
+                                <mat-icon svgIcon="pencil"></mat-icon>
+
+                            </button>
+
+                            <button
+                                mat-icon-button
+                                aria-label="Eliminar libro">
+
+                                <mat-icon svgIcon="trash-2"></mat-icon>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- LIBRO 3 -->
+                    <tr class="border-b border-neutral-100 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50">
+
+                        <td class="px-6 py-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/30">
+
+                                    <mat-icon
+                                        svgIcon="book-open"
+                                        class="text-orange-600">
+                                    </mat-icon>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="font-medium">
+                                        Don Quijote de la Mancha
+                                    </div>
+
+                                    <div class="text-sm text-neutral-500">
+                                        ISBN: 978-8420412146
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            Miguel de Cervantes
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            Clásicos
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            1605
+                        </td>
+
+
+                        <td class="px-6 py-4">
+
+                            <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                Activo
+                            </span>
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-right">
+
+                            <button
+                                mat-icon-button
+                                aria-label="Editar libro">
+
+                                <mat-icon svgIcon="pencil"></mat-icon>
+
+                            </button>
+
+                            <button
+                                mat-icon-button
+                                aria-label="Eliminar libro">
+
+                                <mat-icon svgIcon="trash-2"></mat-icon>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- LIBRO 4 -->
+                    <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+
+                        <td class="px-6 py-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-pink-100 dark:bg-pink-900/30">
+
+                                    <mat-icon
+                                        svgIcon="book-open"
+                                        class="text-pink-600">
+                                    </mat-icon>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="font-medium">
+                                        Orgullo y prejuicio
+                                    </div>
+
+                                    <div class="text-sm text-neutral-500">
+                                        ISBN: 978-0141439518
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            Jane Austen
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            Romance
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm">
+                            1813
+                        </td>
+
+
+                        <td class="px-6 py-4">
+
+                            <span class="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
+                                Inactivo
+                            </span>
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-right">
+
+                            <button
+                                mat-icon-button
+                                aria-label="Editar libro">
+
+                                <mat-icon svgIcon="pencil"></mat-icon>
+
+                            </button>
+
+                            <button
+                                mat-icon-button
+                                aria-label="Eliminar libro">
+
+                                <mat-icon svgIcon="trash-2"></mat-icon>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- PIE DE TABLA -->
+        <div class="flex flex-col items-center justify-between gap-4 border-t border-neutral-200 px-6 py-4 dark:border-neutral-700 sm:flex-row">
+
+            <div class="text-sm text-neutral-500">
+
+                Mostrando
+                <span class="font-medium">1–4</span>
+                de
+                <span class="font-medium">248</span>
+                libros
+
+            </div>
+
+
+            <!-- Paginación visual -->
+            <div class="flex items-center gap-2">
+
+                <button
+                    mat-icon-button
+                    disabled
+                    aria-label="Página anterior">
+
+                    <mat-icon svgIcon="chevron-left"></mat-icon>
+
+                </button>
+
+
+                <button
+                    matButton="filled"
+                    class="min-w-10">
+
+                    1
+
+                </button>
+
+
+                <button matButton="outlined">
+                    2
+                </button>
+
+
+                <button matButton="outlined">
+                    3
+                </button>
+
+
+                <button
+                    mat-icon-button
+                    aria-label="Página siguiente">
+
+                    <mat-icon svgIcon="chevron-right"></mat-icon>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </mat-card>
+
+</div>
