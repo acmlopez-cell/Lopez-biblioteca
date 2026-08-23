@@ -1,669 +1,1026 @@
-<div class="mx-auto flex w-full max-w-7xl flex-auto flex-col gap-6 p-6 sm:p-8">
+<div class="w-full p-6">
 
     <!-- ENCABEZADO -->
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
-        <div>
-            <h1 class="text-3xl font-bold tracking-tight">
-                Administración de Libros
+        <div class="min-w-0">
+            <h1 class="text-3xl font-bold">
+                Administración de libros
             </h1>
 
-            <p class="mt-1 text-sm text-neutral-500">
-                Gestiona, consulta y administra los libros disponibles en la biblioteca.
+            <p class="mt-1 text-gray-500">
+                Gestiona, busca, agrega y administra los libros de la biblioteca.
             </p>
         </div>
 
-        <!-- Propuesta: botón para registrar un nuevo libro -->
         <button
-            matButton="filled"
-            class="shrink-0">
-
-            <mat-icon
-                svgIcon="plus"
-                class="mr-2">
-            </mat-icon>
-
-            Agregar libro
+            type="button"
+            class="flex h-12 w-auto shrink-0 items-center justify-center whitespace-nowrap rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+            (click)="nuevoLibro()"
+        >
+            <span>
+                Agregar libro
+            </span>
         </button>
 
     </div>
 
 
-    <!-- TARJETAS DE INFORMACIÓN -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <!-- MENSAJE -->
+    @if (mensaje()) {
+        <div
+            class="mb-6 rounded-lg border p-4"
+            [class.border-green-300]="tipoMensaje() === 'success'"
+            [class.bg-green-50]="tipoMensaje() === 'success'"
+            [class.text-green-700]="tipoMensaje() === 'success'"
+            [class.border-red-300]="tipoMensaje() === 'error'"
+            [class.bg-red-50]="tipoMensaje() === 'error'"
+            [class.text-red-700]="tipoMensaje() === 'error'"
+        >
+            {{ mensaje() }}
+        </div>
+    }
 
-        <!-- Total -->
-        <mat-card
-            appearance="outlined"
-            class="p-5">
 
+    <!-- ESTADÍSTICAS -->
+    <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
+        <mat-card class="!rounded-xl !p-5">
             <div class="flex items-center gap-4">
 
-                <div class="flex size-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
-
-                    <mat-icon
-                        svgIcon="book-open"
-                        class="text-blue-600">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-100">
+                    <mat-icon class="!m-0 text-blue-600">
+                        menu_book
                     </mat-icon>
-
                 </div>
 
                 <div>
-
-                    <div class="text-sm text-neutral-500">
+                    <p class="text-sm text-gray-500">
                         Total de libros
-                    </div>
+                    </p>
 
-                    <div class="mt-1 text-2xl font-bold">
-                        248
-                    </div>
-
+                    <p class="text-2xl font-bold">
+                        {{ totalLibros() }}
+                    </p>
                 </div>
 
             </div>
-
         </mat-card>
 
 
-        <!-- Activos -->
-        <mat-card
-            appearance="outlined"
-            class="p-5">
-
+        <mat-card class="!rounded-xl !p-5">
             <div class="flex items-center gap-4">
 
-                <div class="flex size-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-
-                    <mat-icon
-                        svgIcon="circle-check"
-                        class="text-green-600">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100">
+                    <mat-icon class="!m-0 text-green-600">
+                        library_books
                     </mat-icon>
-
                 </div>
 
                 <div>
+                    <p class="text-sm text-gray-500">
+                        Libros disponibles
+                    </p>
 
-                    <div class="text-sm text-neutral-500">
-                        Libros activos
-                    </div>
-
-                    <div class="mt-1 text-2xl font-bold">
-                        231
-                    </div>
-
+                    <p class="text-2xl font-bold">
+                        {{ librosDisponibles() }}
+                    </p>
                 </div>
 
             </div>
-
         </mat-card>
 
 
-        <!-- Categorías -->
-        <mat-card
-            appearance="outlined"
-            class="p-5">
-
+        <mat-card class="!rounded-xl !p-5">
             <div class="flex items-center gap-4">
 
-                <div class="flex size-12 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/30">
-
-                    <mat-icon
-                        svgIcon="folder"
-                        class="text-orange-600">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-yellow-100">
+                    <mat-icon class="!m-0 text-yellow-600">
+                        star
                     </mat-icon>
-
                 </div>
 
                 <div>
+                    <p class="text-sm text-gray-500">
+                        Favoritos
+                    </p>
 
-                    <div class="text-sm text-neutral-500">
-                        Categorías
-                    </div>
-
-                    <div class="mt-1 text-2xl font-bold">
-                        12
-                    </div>
-
+                    <p class="text-2xl font-bold">
+                        {{ librosFavoritos() }}
+                    </p>
                 </div>
 
             </div>
-
-        </mat-card>
-
-
-        <!-- Nuevos -->
-        <mat-card
-            appearance="outlined"
-            class="p-5">
-
-            <div class="flex items-center gap-4">
-
-                <div class="flex size-12 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
-
-                    <mat-icon
-                        svgIcon="book-plus"
-                        class="text-purple-600">
-                    </mat-icon>
-
-                </div>
-
-                <div>
-
-                    <div class="text-sm text-neutral-500">
-                        Agregados este mes
-                    </div>
-
-                    <div class="mt-1 text-2xl font-bold">
-                        18
-                    </div>
-
-                </div>
-
-            </div>
-
         </mat-card>
 
     </div>
 
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <mat-card
-        appearance="outlined"
-        class="overflow-hidden">
+    <!-- BUSCADOR Y FILTRO -->
+    <mat-card class="mb-8 !rounded-xl !p-5">
 
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 
-        <!-- BARRA DE HERRAMIENTAS -->
-        <div class="flex flex-col gap-4 border-b border-neutral-200 p-6 dark:border-neutral-700 lg:flex-row lg:items-center">
+            <mat-form-field appearance="outline" class="!w-full md:col-span-2">
 
-            <!-- Buscador -->
-            <div class="flex flex-1 items-center gap-3 rounded-lg border border-neutral-300 px-4 py-2.5 dark:border-neutral-600">
+                <mat-label>
+                    Buscar libro
+                </mat-label>
 
-                <mat-icon
-                    svgIcon="search"
-                    class="size-5 text-neutral-500">
+                <mat-icon matPrefix>
+                    search
                 </mat-icon>
 
                 <input
+                    matInput
                     type="text"
-                    placeholder="Buscar por título, autor o ISBN..."
-                    class="w-full border-0 bg-transparent text-sm outline-none"
+                    [value]="busqueda()"
+                    (input)="actualizarBusqueda($any($event.target).value)"
+                    placeholder="Título, autor, ISBN o editorial"
                 />
 
-            </div>
+            </mat-form-field>
 
 
-            <!-- Filtro -->
+            <mat-form-field appearance="outline" class="!w-full">
+
+                <mat-label>
+                    Categoría
+                </mat-label>
+
+                <mat-select
+                    [value]="categoriaSeleccionada()"
+                    (selectionChange)="actualizarCategoria($event.value)"
+                >
+
+                    @for (categoria of categorias(); track categoria) {
+                        <mat-option [value]="categoria">
+                            {{ categoria }}
+                        </mat-option>
+                    }
+
+                </mat-select>
+
+            </mat-form-field>
+
+        </div>
+
+
+        <div class="flex justify-end">
+
             <button
-                matButton="outlined"
-                class="shrink-0">
+                mat-button
+                type="button"
+                class="!flex !items-center !gap-1"
+                (click)="limpiarFiltros()"
+            >
 
-                <mat-icon
-                    svgIcon="filter"
-                    class="mr-2">
+                <mat-icon class="!m-0">
+                    filter_alt_off
                 </mat-icon>
 
-                Filtrar
-
-            </button>
-
-
-            <!-- Categorías -->
-            <button
-                matButton="outlined"
-                class="shrink-0">
-
-                <mat-icon
-                    svgIcon="folder"
-                    class="mr-2">
-                </mat-icon>
-
-                Categorías
+                Limpiar filtros
 
             </button>
 
         </div>
 
+    </mat-card>
 
-        <!-- TÍTULO DE LA TABLA -->
-        <div class="px-6 pt-6">
 
-            <h2 class="text-lg font-semibold">
-                Libros registrados
+    <!-- FORMULARIO -->
+    @if (mostrandoFormulario()) {
+
+        <mat-card class="mb-8 !rounded-xl !p-6">
+
+            <div class="mb-6 flex items-center justify-between">
+
+                <div>
+                    <h2 class="text-2xl font-bold">
+
+                        @if (modoEdicion()) {
+                            Editar libro
+                        } @else {
+                            Agregar nuevo libro
+                        }
+
+                    </h2>
+
+                    <p class="mt-1 text-sm text-gray-500">
+                        Completa la información del libro.
+                    </p>
+                </div>
+
+
+                <button
+                    mat-icon-button
+                    type="button"
+                    (click)="cancelarFormulario()"
+                    aria-label="Cerrar formulario"
+                >
+
+                    <mat-icon>
+                        close
+                    </mat-icon>
+
+                </button>
+
+            </div>
+
+
+            <!-- CAMPOS -->
+            <div class="grid grid-cols-1 gap-x-5 gap-y-2 md:grid-cols-2">
+
+                <!-- TÍTULO -->
+                <mat-form-field appearance="outline" class="!w-full">
+
+                    <mat-label>
+                        Título
+                    </mat-label>
+
+                    <input
+                        matInput
+                        type="text"
+                        [ngModel]="libroForm().titulo"
+                        (ngModelChange)="actualizarCampo('titulo', $event)"
+                    />
+
+                </mat-form-field>
+
+
+                <!-- AUTOR -->
+                <mat-form-field appearance="outline" class="!w-full">
+
+                    <mat-label>
+                        Autor
+                    </mat-label>
+
+                    <input
+                        matInput
+                        type="text"
+                        [ngModel]="libroForm().autor"
+                        (ngModelChange)="actualizarCampo('autor', $event)"
+                    />
+
+                </mat-form-field>
+
+
+                <!-- ISBN -->
+                <mat-form-field appearance="outline" class="!w-full">
+
+                    <mat-label>
+                        ISBN
+                    </mat-label>
+
+                    <input
+                        matInput
+                        type="text"
+                        [ngModel]="libroForm().isbn"
+                        (ngModelChange)="actualizarCampo('isbn', $event)"
+                        placeholder="Opcional"
+                    />
+
+                </mat-form-field>
+
+
+                <!-- CATEGORÍA -->
+                <mat-form-field appearance="outline" class="!w-full">
+
+                    <mat-label>
+                        Categoría
+                    </mat-label>
+
+                    <input
+                        matInput
+                        type="text"
+                        [ngModel]="libroForm().categoria"
+                        (ngModelChange)="actualizarCampo('categoria', $event)"
+                    />
+
+                </mat-form-field>
+
+
+                <!-- EDITORIAL -->
+                <mat-form-field appearance="outline" class="!w-full">
+
+                    <mat-label>
+                        Editorial
+                    </mat-label>
+
+                    <input
+                        matInput
+                        type="text"
+                        [ngModel]="libroForm().editorial"
+                        (ngModelChange)="actualizarCampo('editorial', $event)"
+                    />
+
+                </mat-form-field>
+
+
+                <!-- AÑO -->
+                <mat-form-field appearance="outline" class="!w-full">
+
+                    <mat-label>
+                        Año de publicación
+                    </mat-label>
+
+                    <input
+                        matInput
+                        type="number"
+                        [ngModel]="libroForm().anio"
+                        (ngModelChange)="actualizarCampo('anio', convertirNumeroONull($event))"
+                    />
+
+                </mat-form-field>
+
+
+                <!-- CALIFICACIÓN -->
+                <mat-form-field appearance="outline" class="!w-full">
+
+                    <mat-label>
+                        Calificación
+                    </mat-label>
+
+                    <input
+                        matInput
+                        type="number"
+                        min="0"
+                        max="5"
+                        step="0.1"
+                        [ngModel]="libroForm().calificacion"
+                        (ngModelChange)="actualizarCampo('calificacion', convertirNumero($event))"
+                    />
+
+                    <mat-hint>
+                        Valor entre 0 y 5
+                    </mat-hint>
+
+                </mat-form-field>
+
+
+                <!-- DISPONIBLES -->
+                <mat-form-field appearance="outline" class="!w-full">
+
+                    <mat-label>
+                        Cantidad disponible
+                    </mat-label>
+
+                    <input
+                        matInput
+                        type="number"
+                        min="0"
+                        [ngModel]="libroForm().disponible"
+                        (ngModelChange)="actualizarCampo('disponible', convertirNumero($event))"
+                    />
+
+                    <mat-hint>
+                        Cantidad de ejemplares disponibles
+                    </mat-hint>
+
+                </mat-form-field>
+
+
+                <!-- PORTADA -->
+                <mat-form-field
+                    appearance="outline"
+                    class="!w-full md:col-span-2"
+                >
+
+                    <mat-label>
+                        URL de la portada
+                    </mat-label>
+
+                    <input
+                        matInput
+                        type="url"
+                        [ngModel]="libroForm().portada"
+                        (ngModelChange)="actualizarCampo('portada', $event)"
+                        placeholder="https://..."
+                    />
+
+                </mat-form-field>
+
+
+                <!-- DESCRIPCIÓN -->
+                <mat-form-field
+                    appearance="outline"
+                    class="!w-full md:col-span-2"
+                >
+
+                    <mat-label>
+                        Descripción
+                    </mat-label>
+
+                    <textarea
+                        matInput
+                        rows="5"
+                        [ngModel]="libroForm().descripcion"
+                        (ngModelChange)="actualizarCampo('descripcion', $event)"
+                    ></textarea>
+
+                </mat-form-field>
+
+            </div>
+
+
+            <!-- BOTONES DEL FORMULARIO -->
+            <div class="mt-6 flex w-full flex-col gap-3 border-t border-gray-100 pt-6 sm:flex-row sm:justify-end">
+
+                <button
+                    type="button"
+                    class="flex h-11 w-full min-w-[130px] items-center justify-center rounded-lg border border-gray-300 bg-white px-6 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 sm:w-auto"
+                    (click)="cancelarFormulario()"
+                >
+                    <span class="whitespace-nowrap">
+                        Cancelar
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="flex h-11 w-full min-w-[180px] items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto"
+                    (click)="guardarLibro()"
+                >
+
+                    <mat-icon class="!m-0">
+                        save
+                    </mat-icon>
+
+                    <span class="whitespace-nowrap">
+
+                        @if (modoEdicion()) {
+                            Actualizar libro
+                        } @else {
+                            Guardar libro
+                        }
+
+                    </span>
+
+                </button>
+
+            </div>
+
+        </mat-card>
+
+    }
+
+
+    <!-- TOP 10 -->
+    @if (top10Libros().length > 0) {
+
+        <section class="mb-10">
+
+            <div class="mb-4">
+                <h2 class="text-2xl font-bold">
+                    Top 10 libros
+                </h2>
+
+                <p class="text-sm text-gray-500">
+                    Los libros con mejor calificación.
+                </p>
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+
+                @for (
+                    libro of top10Libros();
+                    track libro.id;
+                    let posicion = $index
+                ) {
+
+                    <mat-card class="overflow-hidden !rounded-xl">
+
+                        @if (libro.portada) {
+
+                            <img
+                                [src]="libro.portada"
+                                [alt]="libro.titulo"
+                                class="block h-52 w-full object-cover"
+                            />
+
+                        } @else {
+
+                            <div class="flex h-52 items-center justify-center bg-gray-100">
+
+                                <mat-icon class="!h-16 !w-16 !text-[64px] text-gray-400">
+                                    menu_book
+                                </mat-icon>
+
+                            </div>
+
+                        }
+
+
+                        <div class="p-4">
+
+                            <div class="mb-2 flex items-center justify-between">
+
+                                <span class="rounded-full bg-blue-100 px-2 py-1 text-xs font-bold text-blue-700">
+                                    #{{ posicion + 1 }}
+                                </span>
+
+                                <span class="flex items-center gap-1 text-sm font-semibold">
+
+                                    <mat-icon class="!m-0 !h-5 !w-5 !text-[20px]">
+                                        star
+                                    </mat-icon>
+
+                                    {{ libro.calificacion }}
+
+                                </span>
+
+                            </div>
+
+
+                            <h3 class="truncate font-bold">
+                                {{ libro.titulo }}
+                            </h3>
+
+                            <p class="mt-1 truncate text-sm text-gray-500">
+                                {{ libro.autor }}
+                            </p>
+
+                        </div>
+
+                    </mat-card>
+
+                }
+
+            </div>
+
+        </section>
+
+    }
+
+
+    <!-- LIBROS RECIENTES -->
+    @if (librosRecientes().length > 0) {
+
+        <section class="mb-10">
+
+            <div class="mb-4">
+
+                <h2 class="text-2xl font-bold">
+                    Libros recientes
+                </h2>
+
+                <p class="text-sm text-gray-500">
+                    Los últimos libros agregados.
+                </p>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+                @for (libro of librosRecientes(); track libro.id) {
+
+                    <mat-card class="overflow-hidden !rounded-xl">
+
+                        <div class="flex gap-4 p-4">
+
+                            @if (libro.portada) {
+
+                                <img
+                                    [src]="libro.portada"
+                                    [alt]="libro.titulo"
+                                    class="block h-32 w-24 shrink-0 rounded-lg object-cover"
+                                />
+
+                            } @else {
+
+                                <div class="flex h-32 w-24 shrink-0 items-center justify-center rounded-lg bg-gray-100">
+
+                                    <mat-icon>
+                                        menu_book
+                                    </mat-icon>
+
+                                </div>
+
+                            }
+
+
+                            <div class="min-w-0 flex-1">
+
+                                <h3 class="truncate font-bold">
+                                    {{ libro.titulo }}
+                                </h3>
+
+                                <p class="mt-1 truncate text-sm text-gray-500">
+                                    {{ libro.autor }}
+                                </p>
+
+                                <p class="mt-2 text-xs text-gray-400">
+                                    {{ libro.categoria }}
+                                </p>
+
+                                <div class="mt-3 flex items-center gap-1 text-sm">
+
+                                    <mat-icon class="!m-0 !h-5 !w-5 !text-[20px]">
+                                        star
+                                    </mat-icon>
+
+                                    {{ libro.calificacion }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </mat-card>
+
+                }
+
+            </div>
+
+        </section>
+
+    }
+
+
+    <!-- LIBROS SUGERIDOS -->
+    @if (librosSugeridos().length > 0) {
+
+        <section class="mb-10">
+
+            <div class="mb-4">
+
+                <h2 class="text-2xl font-bold">
+                    Libros sugeridos
+                </h2>
+
+                <p class="text-sm text-gray-500">
+                    Libros destacados por su calificación.
+                </p>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+                @for (libro of librosSugeridos(); track libro.id) {
+
+                    <mat-card class="overflow-hidden !rounded-xl">
+
+                        <div class="flex gap-4 p-4">
+
+                            @if (libro.portada) {
+
+                                <img
+                                    [src]="libro.portada"
+                                    [alt]="libro.titulo"
+                                    class="block h-32 w-24 shrink-0 rounded-lg object-cover"
+                                />
+
+                            } @else {
+
+                                <div class="flex h-32 w-24 shrink-0 items-center justify-center rounded-lg bg-gray-100">
+
+                                    <mat-icon>
+                                        menu_book
+                                    </mat-icon>
+
+                                </div>
+
+                            }
+
+
+                            <div class="min-w-0 flex-1">
+
+                                <h3 class="line-clamp-2 font-bold">
+                                    {{ libro.titulo }}
+                                </h3>
+
+                                <p class="mt-1 truncate text-sm text-gray-500">
+                                    {{ libro.autor }}
+                                </p>
+
+                                <p class="mt-2 line-clamp-3 text-sm">
+                                    {{ libro.descripcion || 'Sin descripción.' }}
+                                </p>
+
+                                <div class="mt-3 flex items-center gap-1 text-sm font-semibold">
+
+                                    <mat-icon class="!m-0 !h-5 !w-5 !text-[20px]">
+                                        star
+                                    </mat-icon>
+
+                                    {{ libro.calificacion }}/5
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </mat-card>
+
+                }
+
+            </div>
+
+        </section>
+
+    }
+
+
+    <!-- BIBLIOTECA -->
+    <section>
+
+        <div class="mb-4">
+
+            <h2 class="text-2xl font-bold">
+                Biblioteca
             </h2>
 
-            <p class="mt-1 text-sm text-neutral-500">
-                Lista de libros disponibles para administrar.
+            <p class="text-sm text-gray-500">
+                {{ librosFiltrados().length }} libro(s) encontrado(s).
             </p>
 
         </div>
 
 
-        <!-- TABLA -->
-        <div class="mt-4 overflow-x-auto">
+        @if (librosFiltrados().length > 0) {
 
-            <table class="w-full min-w-[950px]">
+            <div class="overflow-hidden rounded-xl border border-gray-200">
 
-                <thead>
+                <div class="overflow-x-auto">
 
-                    <tr class="border-b border-neutral-200 dark:border-neutral-700">
+                    <table class="w-full min-w-[1000px]">
 
-                        <th class="px-6 py-4 text-left text-sm font-semibold">
-                            Libro
-                        </th>
+                        <thead class="bg-gray-50">
 
-                        <th class="px-6 py-4 text-left text-sm font-semibold">
-                            Autor
-                        </th>
+                            <tr>
 
-                        <th class="px-6 py-4 text-left text-sm font-semibold">
-                            Categoría
-                        </th>
+                                <th class="px-5 py-4 text-left text-sm font-semibold">
+                                    Libro
+                                </th>
 
-                        <th class="px-6 py-4 text-left text-sm font-semibold">
-                            Año
-                        </th>
+                                <th class="px-5 py-4 text-left text-sm font-semibold">
+                                    Autor
+                                </th>
 
-                        <th class="px-6 py-4 text-left text-sm font-semibold">
-                            Estado
-                        </th>
+                                <th class="px-5 py-4 text-left text-sm font-semibold">
+                                    Categoría
+                                </th>
 
-                        <th class="px-6 py-4 text-right text-sm font-semibold">
-                            Acciones
-                        </th>
+                                <th class="px-5 py-4 text-left text-sm font-semibold">
+                                    Editorial
+                                </th>
 
-                    </tr>
+                                <th class="px-5 py-4 text-left text-sm font-semibold">
+                                    Año
+                                </th>
 
-                </thead>
+                                <th class="px-5 py-4 text-left text-sm font-semibold">
+                                    Calificación
+                                </th>
 
+                                <th class="px-5 py-4 text-left text-sm font-semibold">
+                                    Disponibles
+                                </th>
 
-                <tbody>
+                                <th class="px-5 py-4 text-right text-sm font-semibold">
+                                    Acciones
+                                </th>
 
+                            </tr>
 
-                    <!-- LIBRO 1 -->
-                    <tr class="border-b border-neutral-100 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50">
+                        </thead>
 
-                        <td class="px-6 py-4">
 
-                            <div class="flex items-center gap-3">
+                        <tbody class="divide-y divide-gray-200">
 
-                                <div class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                            @for (libro of librosFiltrados(); track libro.id) {
 
-                                    <mat-icon
-                                        svgIcon="book-open"
-                                        class="text-blue-600">
-                                    </mat-icon>
+                                <tr>
 
-                                </div>
+                                    <td class="px-5 py-4">
 
-                                <div>
+                                        <div class="flex items-center gap-3">
 
-                                    <div class="font-medium">
-                                        Cien años de soledad
-                                    </div>
+                                            @if (libro.portada) {
 
-                                    <div class="text-sm text-neutral-500">
-                                        ISBN: 978-0307474728
-                                    </div>
+                                                <img
+                                                    [src]="libro.portada"
+                                                    [alt]="libro.titulo"
+                                                    class="block h-14 w-10 shrink-0 rounded object-cover"
+                                                />
 
-                                </div>
+                                            } @else {
 
-                            </div>
+                                                <div class="flex h-14 w-10 shrink-0 items-center justify-center rounded bg-gray-100">
 
-                        </td>
+                                                    <mat-icon>
+                                                        menu_book
+                                                    </mat-icon>
 
+                                                </div>
 
-                        <td class="px-6 py-4 text-sm">
-                            Gabriel García Márquez
-                        </td>
+                                            }
 
 
-                        <td class="px-6 py-4 text-sm">
-                            Literatura
-                        </td>
+                                            <div class="min-w-0">
 
+                                                <p class="truncate font-semibold">
+                                                    {{ libro.titulo }}
+                                                </p>
 
-                        <td class="px-6 py-4 text-sm">
-                            1967
-                        </td>
+                                                @if (libro.isbn) {
 
+                                                    <p class="text-xs text-gray-400">
+                                                        ISBN: {{ libro.isbn }}
+                                                    </p>
 
-                        <td class="px-6 py-4">
+                                                }
 
-                            <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                                Activo
-                            </span>
+                                            </div>
 
-                        </td>
+                                        </div>
 
+                                    </td>
 
-                        <td class="px-6 py-4 text-right">
 
-                            <button
-                                mat-icon-button
-                                aria-label="Editar libro">
+                                    <td class="px-5 py-4 text-sm">
+                                        {{ libro.autor }}
+                                    </td>
 
-                                <mat-icon svgIcon="pencil"></mat-icon>
 
-                            </button>
+                                    <td class="px-5 py-4">
 
-                            <button
-                                mat-icon-button
-                                aria-label="Eliminar libro">
+                                        <span class="whitespace-nowrap rounded-full bg-gray-100 px-3 py-1 text-xs font-medium">
+                                            {{ libro.categoria }}
+                                        </span>
 
-                                <mat-icon svgIcon="trash-2"></mat-icon>
+                                    </td>
 
-                            </button>
 
-                        </td>
+                                    <td class="px-5 py-4 text-sm">
+                                        {{ libro.editorial || '—' }}
+                                    </td>
 
-                    </tr>
 
+                                    <td class="px-5 py-4 text-sm">
+                                        {{ libro.anio || '—' }}
+                                    </td>
 
-                    <!-- LIBRO 2 -->
-                    <tr class="border-b border-neutral-100 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50">
 
-                        <td class="px-6 py-4">
+                                    <td class="px-5 py-4">
 
-                            <div class="flex items-center gap-3">
+                                        <div class="flex items-center gap-1">
 
-                                <div class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                                            <mat-icon class="!m-0 !h-5 !w-5 !text-[20px]">
+                                                star
+                                            </mat-icon>
 
-                                    <mat-icon
-                                        svgIcon="book-open"
-                                        class="text-purple-600">
-                                    </mat-icon>
+                                            <span class="text-sm font-medium">
+                                                {{ libro.calificacion }}
+                                            </span>
 
-                                </div>
+                                        </div>
 
-                                <div>
+                                    </td>
 
-                                    <div class="font-medium">
-                                        El principito
-                                    </div>
 
-                                    <div class="text-sm text-neutral-500">
-                                        ISBN: 978-0156012195
-                                    </div>
+                                    <td class="px-5 py-4">
 
-                                </div>
+                                        @if (libro.disponible > 0) {
 
-                            </div>
+                                            <span class="whitespace-nowrap rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                                                {{ libro.disponible }}
+                                            </span>
 
-                        </td>
+                                        } @else {
 
+                                            <span class="whitespace-nowrap rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
+                                                Agotado
+                                            </span>
 
-                        <td class="px-6 py-4 text-sm">
-                            Antoine de Saint-Exupéry
-                        </td>
+                                        }
 
+                                    </td>
 
-                        <td class="px-6 py-4 text-sm">
-                            Infantil
-                        </td>
 
+                                    <td class="px-5 py-4">
 
-                        <td class="px-6 py-4 text-sm">
-                            1943
-                        </td>
+                                        <div class="flex items-center justify-end gap-1">
 
+                                            <button
+                                                mat-icon-button
+                                                type="button"
+                                                (click)="cambiarFavorito(libro)"
+                                                [attr.aria-label]="
+                                                    libro.favorito
+                                                        ? 'Quitar de favoritos'
+                                                        : 'Agregar a favoritos'
+                                                "
+                                            >
 
-                        <td class="px-6 py-4">
+                                                <mat-icon>
+                                                    {{
+                                                        libro.favorito
+                                                            ? 'favorite'
+                                                            : 'favorite_border'
+                                                    }}
+                                                </mat-icon>
 
-                            <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                                Activo
-                            </span>
+                                            </button>
 
-                        </td>
 
+                                            <button
+                                                mat-icon-button
+                                                type="button"
+                                                (click)="editarLibro(libro)"
+                                                aria-label="Editar libro"
+                                            >
 
-                        <td class="px-6 py-4 text-right">
+                                                <mat-icon>
+                                                    edit
+                                                </mat-icon>
 
-                            <button
-                                mat-icon-button
-                                aria-label="Editar libro">
+                                            </button>
 
-                                <mat-icon svgIcon="pencil"></mat-icon>
 
-                            </button>
+                                            <button
+                                                mat-icon-button
+                                                type="button"
+                                                (click)="eliminarLibro(libro)"
+                                                aria-label="Eliminar libro"
+                                            >
 
-                            <button
-                                mat-icon-button
-                                aria-label="Eliminar libro">
+                                                <mat-icon>
+                                                    delete
+                                                </mat-icon>
 
-                                <mat-icon svgIcon="trash-2"></mat-icon>
+                                            </button>
 
-                            </button>
+                                        </div>
 
-                        </td>
+                                    </td>
 
-                    </tr>
+                                </tr>
 
+                            }
 
-                    <!-- LIBRO 3 -->
-                    <tr class="border-b border-neutral-100 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50">
+                        </tbody>
 
-                        <td class="px-6 py-4">
+                    </table>
 
-                            <div class="flex items-center gap-3">
-
-                                <div class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/30">
-
-                                    <mat-icon
-                                        svgIcon="book-open"
-                                        class="text-orange-600">
-                                    </mat-icon>
-
-                                </div>
-
-                                <div>
-
-                                    <div class="font-medium">
-                                        Don Quijote de la Mancha
-                                    </div>
-
-                                    <div class="text-sm text-neutral-500">
-                                        ISBN: 978-8420412146
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td class="px-6 py-4 text-sm">
-                            Miguel de Cervantes
-                        </td>
-
-
-                        <td class="px-6 py-4 text-sm">
-                            Clásicos
-                        </td>
-
-
-                        <td class="px-6 py-4 text-sm">
-                            1605
-                        </td>
-
-
-                        <td class="px-6 py-4">
-
-                            <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                                Activo
-                            </span>
-
-                        </td>
-
-
-                        <td class="px-6 py-4 text-right">
-
-                            <button
-                                mat-icon-button
-                                aria-label="Editar libro">
-
-                                <mat-icon svgIcon="pencil"></mat-icon>
-
-                            </button>
-
-                            <button
-                                mat-icon-button
-                                aria-label="Eliminar libro">
-
-                                <mat-icon svgIcon="trash-2"></mat-icon>
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    <!-- LIBRO 4 -->
-                    <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
-
-                        <td class="px-6 py-4">
-
-                            <div class="flex items-center gap-3">
-
-                                <div class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-pink-100 dark:bg-pink-900/30">
-
-                                    <mat-icon
-                                        svgIcon="book-open"
-                                        class="text-pink-600">
-                                    </mat-icon>
-
-                                </div>
-
-                                <div>
-
-                                    <div class="font-medium">
-                                        Orgullo y prejuicio
-                                    </div>
-
-                                    <div class="text-sm text-neutral-500">
-                                        ISBN: 978-0141439518
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td class="px-6 py-4 text-sm">
-                            Jane Austen
-                        </td>
-
-
-                        <td class="px-6 py-4 text-sm">
-                            Romance
-                        </td>
-
-
-                        <td class="px-6 py-4 text-sm">
-                            1813
-                        </td>
-
-
-                        <td class="px-6 py-4">
-
-                            <span class="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
-                                Inactivo
-                            </span>
-
-                        </td>
-
-
-                        <td class="px-6 py-4 text-right">
-
-                            <button
-                                mat-icon-button
-                                aria-label="Editar libro">
-
-                                <mat-icon svgIcon="pencil"></mat-icon>
-
-                            </button>
-
-                            <button
-                                mat-icon-button
-                                aria-label="Eliminar libro">
-
-                                <mat-icon svgIcon="trash-2"></mat-icon>
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        <!-- PIE DE TABLA -->
-        <div class="flex flex-col items-center justify-between gap-4 border-t border-neutral-200 px-6 py-4 dark:border-neutral-700 sm:flex-row">
-
-            <div class="text-sm text-neutral-500">
-
-                Mostrando
-                <span class="font-medium">1–4</span>
-                de
-                <span class="font-medium">248</span>
-                libros
+                </div>
 
             </div>
 
+        } @else {
 
-            <!-- Paginación visual -->
-            <div class="flex items-center gap-2">
+            <mat-card class="!rounded-xl !p-10 text-center">
 
-                <button
-                    mat-icon-button
-                    disabled
-                    aria-label="Página anterior">
+                <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
 
-                    <mat-icon svgIcon="chevron-left"></mat-icon>
+                    <mat-icon class="!h-10 !w-10 !text-[40px] text-gray-400">
+                        menu_book
+                    </mat-icon>
 
-                </button>
-
-
-                <button
-                    matButton="filled"
-                    class="min-w-10">
-
-                    1
-
-                </button>
+                </div>
 
 
-                <button matButton="outlined">
-                    2
-                </button>
+                @if (totalLibros() === 0) {
 
+                    <h3 class="mt-5 text-xl font-bold">
+                        No hay libros registrados
+                    </h3>
 
-                <button matButton="outlined">
-                    3
-                </button>
+                    <p class="mx-auto mt-2 max-w-md text-gray-500">
+                        Comienza agregando el primer libro de la biblioteca.
+                    </p>
 
+                } @else {
 
-                <button
-                    mat-icon-button
-                    aria-label="Página siguiente">
+                    <h3 class="mt-5 text-xl font-bold">
+                        No se encontraron libros
+                    </h3>
 
-                    <mat-icon svgIcon="chevron-right"></mat-icon>
+                    <p class="mx-auto mt-2 max-w-md text-gray-500">
+                        No existen libros que coincidan con los filtros seleccionados.
+                    </p>
 
-                </button>
+                    <button
+                        mat-button
+                        type="button"
+                        class="!mt-4"
+                        (click)="limpiarFiltros()"
+                    >
+                        Limpiar filtros
+                    </button>
 
-            </div>
+                }
 
-        </div>
+            </mat-card>
 
-    </mat-card>
+        }
+
+    </section>
 
 </div>

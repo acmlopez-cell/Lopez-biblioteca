@@ -1,7 +1,31 @@
-import { Route } from '@angular/router';
+import { Routes } from '@angular/router';
 
-export const routes: Route[] = [
-  // Website routes
+export const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'admin',
+    pathMatch: 'full',
+  },
+
+  // Admin
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./domains/admin/layout/layout').then(
+        (m) => m.AdminLayout
+      ),
+    children: [
+      {
+        path: 'administracion-libros',
+        loadComponent: () =>
+          import('./domains/administracion-libros/administracion-libros').then(
+            (m) => m.AdministracionLibrosComponent
+          ),
+      },
+    ],
+  },
+
+  // Website
   {
     path: 'home',
     loadChildren: () => import('./domains/website/routes'),
@@ -11,17 +35,6 @@ export const routes: Route[] = [
   {
     path: 'auth',
     loadChildren: () => import('./domains/auth/routes'),
-  },
-
-  // Admin
-  {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'admin',
-  },
-  {
-    path: 'admin',
-    loadChildren: () => import('./domains/admin/routes'),
   },
 
   // Coming soon
@@ -35,5 +48,10 @@ export const routes: Route[] = [
     path: 'maintenance',
     loadChildren: () => import('./domains/maintenance/routes'),
   },
-];
 
+  // Cualquier ruta que no exista
+  {
+    path: '**',
+    redirectTo: 'admin',
+  },
+];
