@@ -177,31 +177,47 @@ export class AdministracionLibrosComponent {
     });
 
 
+    // =========================================================
+    // LIBROS FILTRADOS
+    // =========================================================
+
     librosFiltrados = computed(() => {
 
         const texto = this.busqueda()
             .trim()
             .toLowerCase();
 
-        const categoria =
-            this.categoriaSeleccionada();
+        const categoria = this.categoriaSeleccionada();
 
         return this.libros().filter((libro) => {
 
+            const titulo = libro.titulo
+                .toLowerCase()
+                .includes(texto);
+
+            const autor = libro.autor
+                .toLowerCase()
+                .includes(texto);
+
+            const isbn = libro.isbn
+                .toLowerCase()
+                .includes(texto);
+
+            const editorial = libro.editorial
+                .toLowerCase()
+                .includes(texto);
+
+            const categoriaLibro = libro.categoria
+                .toLowerCase()
+                .includes(texto);
+
             const coincideTexto =
-                !texto ||
-                libro.titulo
-                    .toLowerCase()
-                    .includes(texto) ||
-                libro.autor
-                    .toLowerCase()
-                    .includes(texto) ||
-                libro.isbn
-                    .toLowerCase()
-                    .includes(texto) ||
-                libro.editorial
-                    .toLowerCase()
-                    .includes(texto);
+                texto === '' ||
+                titulo ||
+                autor ||
+                isbn ||
+                editorial ||
+                categoriaLibro;
 
             const coincideCategoria =
                 categoria === 'Todas' ||
@@ -575,6 +591,7 @@ export class AdministracionLibrosComponent {
             );
 
         }
+
 
         // =====================================================
         // AGREGAR
