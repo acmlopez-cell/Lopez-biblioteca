@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -9,8 +9,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
+import {
+    Book,
+    BooksService,
+} from '../../core/books/books.service';
+
 interface Libro {
-    id: number;
+    id: string;
     titulo: string;
     autor: string;
     isbn: string;
@@ -54,132 +59,23 @@ interface LibroFormulario {
 })
 export class AdministracionLibrosComponent {
 
-    // =========================================================
-    // LIBROS
-    // =========================================================
+    private booksService = inject(BooksService);
 
-    libros = signal<Libro[]>([
-        {
-            id: 1,
-            titulo: 'Cien años de soledad',
-            autor: 'Gabriel García Márquez',
-            isbn: '9780307474728',
-            categoria: 'Novela',
-            editorial: 'Diana',
-            anio: 1967,
-            calificacion: 4.9,
-            disponible: 5,
-            portada:
-                'https://covers.openlibrary.org/b/isbn/9780307474728-L.jpg',
-            descripcion:
-                'Una de las novelas más importantes de la literatura latinoamericana.',
-            favorito: true,
-        },
-        {
-            id: 2,
-            titulo: 'El principito',
-            autor: 'Antoine de Saint-Exupéry',
-            isbn: '9780156012195',
-            categoria: 'Fantasía',
-            editorial: 'Harcourt',
-            anio: 1943,
-            calificacion: 4.8,
-            disponible: 8,
-            portada:
-                'https://covers.openlibrary.org/b/isbn/9780156012195-L.jpg',
-            descripcion:
-                'Un clásico que reflexiona sobre la amistad, el amor y la vida.',
-            favorito: true,
-        },
-        {
-            id: 3,
-            titulo: 'Don Quijote de la Mancha',
-            autor: 'Miguel de Cervantes',
-            isbn: '9780060934347',
-            categoria: 'Clásico',
-            editorial: 'Harper Perennial',
-            anio: 1605,
-            calificacion: 4.7,
-            disponible: 3,
-            portada:
-                'https://covers.openlibrary.org/b/isbn/9780060934347-L.jpg',
-            descripcion:
-                'La historia del ingenioso hidalgo Don Quijote y sus aventuras.',
-            favorito: false,
-        },
-        {
-            id: 4,
-            titulo: 'Harry Potter y la piedra filosofal',
-            autor: 'J. K. Rowling',
-            isbn: '9780590353427',
-            categoria: 'Fantasía',
-            editorial: 'Scholastic',
-            anio: 1997,
-            calificacion: 4.9,
-            disponible: 10,
-            portada:
-                'https://covers.openlibrary.org/b/isbn/9780590353427-L.jpg',
-            descripcion:
-                'El inicio de las aventuras de Harry Potter en Hogwarts.',
-            favorito: true,
-        },
-        {
-            id: 5,
-            titulo: '1984',
-            autor: 'George Orwell',
-            isbn: '9780451524935',
-            categoria: 'Ciencia ficción',
-            editorial: 'Signet Classic',
-            anio: 1949,
-            calificacion: 4.6,
-            disponible: 4,
-            portada:
-                'https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg',
-            descripcion:
-                'Una novela distópica sobre una sociedad sometida a vigilancia.',
-            favorito: false,
-        },
-        {
-            id: 6,
-            titulo: 'Orgullo y prejuicio',
-            autor: 'Jane Austen',
-            isbn: '9780141439518',
-            categoria: 'Romance',
-            editorial: 'Penguin Classics',
-            anio: 1813,
-            calificacion: 4.8,
-            disponible: 6,
-            portada:
-                'https://covers.openlibrary.org/b/isbn/9780141439518-L.jpg',
-            descripcion:
-                'Una historia clásica sobre amor, sociedad y prejuicios.',
-            favorito: false,
-        },
-    ]);
+    cargando = signal(false);
 
-
-    // =========================================================
-    // BUSCADOR
-    // =========================================================
+    libros = signal<Libro[]>([]);
 
     busqueda = signal('');
 
     categoriaSeleccionada = signal('Todas');
 
     categorias = computed(() => {
-
         const lista = this.libros().map(
             (libro) => libro.categoria
         );
 
         return ['Todas', ...new Set(lista)];
-
     });
-
-
-    // =========================================================
-    // LIBROS FILTRADOS
-    // =========================================================
 
     librosFiltrados = computed(() => {
 
@@ -224,15 +120,8 @@ export class AdministracionLibrosComponent {
                 libro.categoria === categoria;
 
             return coincideTexto && coincideCategoria;
-
         });
-
     });
-
-
-    // =========================================================
-    // ESTADÍSTICAS
-    // =========================================================
 
     totalLibros = computed(() =>
         this.libros().length
@@ -250,11 +139,6 @@ export class AdministracionLibrosComponent {
         ).length
     );
 
-
-    // =========================================================
-    // TOP 10
-    // =========================================================
-
     top10Libros = computed(() =>
         [...this.libros()]
             .sort(
@@ -264,21 +148,11 @@ export class AdministracionLibrosComponent {
             .slice(0, 10)
     );
 
-
-    // =========================================================
-    // RECIENTES
-    // =========================================================
-
     librosRecientes = computed(() =>
         [...this.libros()]
             .reverse()
             .slice(0, 6)
     );
-
-
-    // =========================================================
-    // SUGERIDOS
-    // =========================================================
 
     librosSugeridos = computed(() =>
         [...this.libros()]
@@ -293,39 +167,115 @@ export class AdministracionLibrosComponent {
             .slice(0, 6)
     );
 
-
-    // =========================================================
-    // FORMULARIO
-    // =========================================================
-
     mostrandoFormulario = signal(false);
 
     modoEdicion = signal(false);
 
-    libroEditandoId = signal<number | null>(null);
+    libroEditandoId = signal<string | null>(null);
 
     libroForm = signal<LibroFormulario>(
         this.formularioVacio()
     );
-
-
-    // =========================================================
-    // MENSAJES
-    // =========================================================
 
     mensaje = signal('');
 
     tipoMensaje =
         signal<'success' | 'error'>('success');
 
+    constructor() {
+        this.cargarLibros();
+    }
 
-    // =========================================================
-    // FORMULARIO VACÍO
-    // =========================================================
+    private cargarLibros(): void {
+
+        this.cargando.set(true);
+
+        this.booksService.getBooks(1, 100).subscribe({
+
+            next: (response) => {
+
+                const librosConvertidos: Libro[] =
+                    response.data.map((book) =>
+                        this.convertirLibro(book)
+                    );
+
+                this.libros.set(
+                    librosConvertidos
+                );
+
+                this.cargando.set(false);
+
+                console.log(
+                    'Libros recibidos del backend:',
+                    response
+                );
+            },
+
+            error: (error) => {
+
+                this.cargando.set(false);
+
+                console.error(
+                    'Error al cargar libros:',
+                    error
+                );
+
+                this.mostrarMensaje(
+                    'No se pudieron cargar los libros.',
+                    'error'
+                );
+            },
+        });
+    }
+
+    private convertirLibro(
+        book: Book
+    ): Libro {
+
+        return {
+
+            id:
+                book.id,
+
+            titulo:
+                book.title ?? '',
+
+            autor:
+                book.author ?? '',
+
+            isbn:
+                '',
+
+            categoria:
+                book.categoryId ?? '',
+
+            editorial:
+                '',
+
+            anio:
+                null,
+
+            calificacion:
+                0,
+
+            disponible:
+                1,
+
+            portada:
+                book.fileUrl ?? '',
+
+            descripcion:
+                '',
+
+            favorito:
+                false,
+        };
+    }
 
     private formularioVacio(): LibroFormulario {
 
         return {
+
             titulo: '',
             autor: '',
             isbn: '',
@@ -337,13 +287,7 @@ export class AdministracionLibrosComponent {
             portada: '',
             descripcion: '',
         };
-
     }
-
-
-    // =========================================================
-    // NUEVO LIBRO
-    // =========================================================
 
     nuevoLibro(): void {
 
@@ -363,15 +307,11 @@ export class AdministracionLibrosComponent {
             top: 0,
             behavior: 'smooth',
         });
-
     }
 
-
-    // =========================================================
-    // EDITAR
-    // =========================================================
-
-    editarLibro(libro: Libro): void {
+    editarLibro(
+        libro: Libro
+    ): void {
 
         this.modoEdicion.set(true);
 
@@ -381,17 +321,23 @@ export class AdministracionLibrosComponent {
 
         this.libroForm.set({
 
-            titulo: libro.titulo,
+            titulo:
+                libro.titulo,
 
-            autor: libro.autor,
+            autor:
+                libro.autor,
 
-            isbn: libro.isbn,
+            isbn:
+                libro.isbn,
 
-            categoria: libro.categoria,
+            categoria:
+                libro.categoria,
 
-            editorial: libro.editorial,
+            editorial:
+                libro.editorial,
 
-            anio: libro.anio,
+            anio:
+                libro.anio,
 
             calificacion:
                 libro.calificacion,
@@ -404,7 +350,6 @@ export class AdministracionLibrosComponent {
 
             descripcion:
                 libro.descripcion,
-
         });
 
         this.mostrandoFormulario.set(true);
@@ -415,21 +360,12 @@ export class AdministracionLibrosComponent {
             top: 0,
             behavior: 'smooth',
         });
-
     }
-
-
-    // =========================================================
-    // GUARDAR
-    // =========================================================
 
     guardarLibro(): void {
 
         const formulario =
             this.libroForm();
-
-
-        // VALIDAR TÍTULO
 
         if (!formulario.titulo.trim()) {
 
@@ -440,7 +376,6 @@ export class AdministracionLibrosComponent {
 
             return;
         }
-
 
         if (
             formulario.titulo
@@ -456,9 +391,6 @@ export class AdministracionLibrosComponent {
             return;
         }
 
-
-        // VALIDAR AUTOR
-
         if (!formulario.autor.trim()) {
 
             this.mostrarMensaje(
@@ -468,7 +400,6 @@ export class AdministracionLibrosComponent {
 
             return;
         }
-
 
         if (
             formulario.autor
@@ -484,9 +415,6 @@ export class AdministracionLibrosComponent {
             return;
         }
 
-
-        // VALIDAR CATEGORÍA
-
         if (!formulario.categoria.trim()) {
 
             this.mostrarMensaje(
@@ -496,9 +424,6 @@ export class AdministracionLibrosComponent {
 
             return;
         }
-
-
-        // VALIDAR CALIFICACIÓN
 
         if (
             formulario.calificacion < 0 ||
@@ -513,9 +438,6 @@ export class AdministracionLibrosComponent {
             return;
         }
 
-
-        // VALIDAR DISPONIBLES
-
         if (
             formulario.disponible < 0
         ) {
@@ -528,11 +450,6 @@ export class AdministracionLibrosComponent {
             return;
         }
 
-
-        // =====================================================
-        // EDITAR
-        // =====================================================
-
         if (this.modoEdicion()) {
 
             const id =
@@ -544,140 +461,112 @@ export class AdministracionLibrosComponent {
                         (libro) =>
                             libro.id === id
                                 ? {
-                                      ...libro,
+                                    ...libro,
 
-                                      titulo:
-                                          formulario.titulo.trim(),
+                                    titulo:
+                                        formulario.titulo.trim(),
 
-                                      autor:
-                                          formulario.autor.trim(),
+                                    autor:
+                                        formulario.autor.trim(),
 
-                                      isbn:
-                                          formulario.isbn.trim(),
+                                    isbn:
+                                        formulario.isbn.trim(),
 
-                                      categoria:
-                                          formulario.categoria.trim(),
+                                    categoria:
+                                        formulario.categoria.trim(),
 
-                                      editorial:
-                                          formulario.editorial.trim(),
+                                    editorial:
+                                        formulario.editorial.trim(),
 
-                                      anio:
-                                          formulario.anio,
+                                    anio:
+                                        formulario.anio,
 
-                                      calificacion:
-                                          Number(
-                                              formulario.calificacion
-                                          ),
+                                    calificacion:
+                                        Number(
+                                            formulario.calificacion
+                                        ),
 
-                                      disponible:
-                                          Number(
-                                              formulario.disponible
-                                          ),
+                                    disponible:
+                                        Number(
+                                            formulario.disponible
+                                        ),
 
-                                      portada:
-                                          formulario.portada.trim(),
+                                    portada:
+                                        formulario.portada.trim(),
 
-                                      descripcion:
-                                          formulario.descripcion.trim(),
-                                  }
+                                    descripcion:
+                                        formulario.descripcion.trim(),
+                                }
                                 : libro
                     )
             );
-
 
             this.mostrarMensaje(
                 'El libro se actualizó correctamente.',
                 'success'
             );
 
+            this.cancelarFormulario();
+
+            return;
         }
 
+        const nuevoLibro = {
+            title:
+                formulario.titulo.trim(),
 
-        // =====================================================
-        // AGREGAR
-        // =====================================================
+            author:
+                formulario.autor.trim(),
 
-        else {
+            categoryId:
+                null,
 
-            const nuevoId =
-                this.libros().length > 0
-                    ? Math.max(
-                          ...this.libros()
-                              .map(
-                                  (libro) =>
-                                      libro.id
-                              )
-                      ) + 1
-                    : 1;
+            fileUrl:
+                formulario.portada.trim() || null,
+        };
 
+        this.cargando.set(true);
 
-            const nuevoLibro: Libro = {
+        this.booksService.createBook(nuevoLibro).subscribe({
 
-                id: nuevoId,
+            next: (book) => {
 
-                titulo:
-                    formulario.titulo.trim(),
+                const libroConvertido =
+                    this.convertirLibro(book);
 
-                autor:
-                    formulario.autor.trim(),
+                this.libros.update(
+                    (libros) => [
+                        ...libros,
+                        libroConvertido,
+                    ]
+                );
 
-                isbn:
-                    formulario.isbn.trim(),
+                this.cargando.set(false);
 
-                categoria:
-                    formulario.categoria.trim(),
+                this.mostrarMensaje(
+                    'El libro se agregó correctamente.',
+                    'success'
+                );
 
-                editorial:
-                    formulario.editorial.trim(),
+                this.cancelarFormulario();
+            },
 
-                anio:
-                    formulario.anio,
+            error: (error) => {
 
-                calificacion:
-                    Number(
-                        formulario.calificacion
-                    ),
+                this.cargando.set(false);
 
-                disponible:
-                    Number(
-                        formulario.disponible
-                    ),
+                console.error(
+                    'Error al crear el libro:',
+                    error
+                );
 
-                portada:
-                    formulario.portada.trim(),
-
-                descripcion:
-                    formulario.descripcion.trim(),
-
-                favorito: false,
-
-            };
-
-
-            this.libros.update(
-                (libros) => [
-                    ...libros,
-                    nuevoLibro,
-                ]
-            );
-
-
-            this.mostrarMensaje(
-                'El libro se agregó correctamente.',
-                'success'
-            );
-
-        }
-
-
-        this.cancelarFormulario();
-
+                this.mostrarMensaje(
+                    'No se pudo guardar el libro en la base de datos.',
+                    'error'
+                );
+            },
+        });
     }
-
-
-    // =========================================================
-    // CANCELAR
-    // =========================================================
 
     cancelarFormulario(): void {
 
@@ -690,13 +579,7 @@ export class AdministracionLibrosComponent {
         this.libroForm.set(
             this.formularioVacio()
         );
-
     }
-
-
-    // =========================================================
-    // ELIMINAR
-    // =========================================================
 
     eliminarLibro(
         libro: Libro
@@ -707,11 +590,9 @@ export class AdministracionLibrosComponent {
                 `¿Estás seguro de eliminar "${libro.titulo}"?`
             );
 
-
         if (!confirmar) {
             return;
         }
-
 
         this.libros.update(
             (libros) =>
@@ -721,18 +602,11 @@ export class AdministracionLibrosComponent {
                 )
         );
 
-
         this.mostrarMensaje(
             'El libro se eliminó correctamente.',
             'success'
         );
-
     }
-
-
-    // =========================================================
-    // FAVORITOS
-    // =========================================================
 
     cambiarFavorito(
         libro: Libro
@@ -744,38 +618,29 @@ export class AdministracionLibrosComponent {
                     (item) =>
                         item.id === libro.id
                             ? {
-                                  ...item,
+                                ...item,
 
-                                  favorito:
-                                      !item.favorito,
-                              }
+                                favorito:
+                                    !item.favorito,
+                            }
                             : item
                 )
         );
 
-
         this.mostrarMensaje(
             libro.favorito
                 ? 'Libro eliminado de favoritos.'
-                : 'Libro agregado a favoritos.',
+                : 'Libro agregado de favoritos.',
             'success'
         );
-
     }
-
-
-    // =========================================================
-    // BÚSQUEDA
-    // =========================================================
 
     actualizarBusqueda(
         valor: string
     ): void {
 
         this.busqueda.set(valor);
-
     }
-
 
     actualizarCategoria(
         valor: string
@@ -784,9 +649,7 @@ export class AdministracionLibrosComponent {
         this.categoriaSeleccionada.set(
             valor
         );
-
     }
-
 
     limpiarFiltros(): void {
 
@@ -795,13 +658,7 @@ export class AdministracionLibrosComponent {
         this.categoriaSeleccionada.set(
             'Todas'
         );
-
     }
-
-
-    // =========================================================
-    // ACTUALIZAR CAMPOS
-    // =========================================================
 
     actualizarCampo(
         campo: keyof LibroFormulario,
@@ -814,26 +671,19 @@ export class AdministracionLibrosComponent {
                 [campo]: valor,
             })
         );
-
     }
-
-
-    // =========================================================
-    // CONVERTIR NÚMEROS
-    // =========================================================
 
     convertirNumero(
         valor: string | number
     ): number {
 
-        const numero = Number(valor);
+        const numero =
+            Number(valor);
 
         return Number.isNaN(numero)
             ? 0
             : numero;
-
     }
-
 
     convertirNumeroONull(
         valor: string | number | null
@@ -846,18 +696,13 @@ export class AdministracionLibrosComponent {
             return null;
         }
 
-        const numero = Number(valor);
+        const numero =
+            Number(valor);
 
         return Number.isNaN(numero)
             ? null
             : numero;
-
     }
-
-
-    // =========================================================
-    // MENSAJES
-    // =========================================================
 
     private mostrarMensaje(
         texto: string,
@@ -873,14 +718,10 @@ export class AdministracionLibrosComponent {
             this.mensaje.set('');
 
         }, 4000);
-
     }
-
 
     private limpiarMensaje(): void {
 
         this.mensaje.set('');
-
     }
-
 }

@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
 import {
-  email,
   form,
   FormField,
   required,
@@ -13,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'auth-sign-in',
@@ -31,25 +31,37 @@ import { Router, RouterLink } from '@angular/router';
 export default class AuthSignIn {
   // Dependencies
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   // State
   protected signInFormModel = signal({
-    email: 'hughes.brian@company.com',
-    password: 'Secure-Password-123$%^',
+    username: 'admin',
+    password: 'admin',
   });
-  protected signInForm = form(this.signInFormModel, (form) => {
-    required(form.email, { message: 'You must enter an email address' });
-    email(form.email, { message: 'You must enter a valid email address' });
 
-    required(form.password, { message: 'You must enter a password' });
+  protected signInForm = form(this.signInFormModel, (form) => {
+    required(form.username, {
+      message: 'Debes ingresar tu usuario',
+    });
+
+    required(form.password, {
+      message: 'Debes ingresar tu contraseña',
+    });
   });
 
   signIn(event: Event) {
     event.preventDefault();
 
     submit(this.signInForm, async () => {
-      // Navigate to a route, demo purposes only
-      this.router.navigateByUrl('/admin/dashboards');
+      const { username, password } = this.signInFormModel();
+
+      try {
+        await this.authService.signIn(username, password).toPromise();
+
+        await this.router.navigateByUrl('/admin/dashboards');
+      } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+      }
     });
   }
 }
