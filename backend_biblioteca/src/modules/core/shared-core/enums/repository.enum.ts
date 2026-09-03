@@ -1,0 +1,16 @@
+export enum CoreRepositoryEnum {
+  studentRepository = 'studentRepository',
+  careerRepository = 'careerRepository',
+  institutionRepository = 'institutionRepository',
+  schoolPeriodRepository = 'schoolPeriodRepository',
+  enrollmentRepository = 'enrollmentRepository',
+  informationStudenRepository = 'informationStudenRepository',
+  originAddressRepository = 'originAddressRepository',
+  residenceAddressRepository = 'residenceAddressRepository',
+  locationRepository = 'locationRepository',
+  enrollmentDetailRespository = 'enrollmentDetailRespository',
+  enrollmentStateRepository = 'enrollmentStateRepository',
+  enrollmentDetailStateRepository = 'enrollmentDetailStateRepository',
+  teacherDistributionRepository = 'teacherDistributionRepository',
+  subjectRepository = 'subjectRepository',
+}

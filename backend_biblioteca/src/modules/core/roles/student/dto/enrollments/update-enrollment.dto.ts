@@ -1,0 +1,19 @@
+import { PartialType } from '@nestjs/mapped-types';
+import { IsDate, IsOptional, IsString } from 'class-validator';
+import { CreateEnrollmentDto } from './create-enrollment.dto';
+import { SchoolPeriodEntity } from '@modules/core/entities';
+import { Type } from 'class-transformer';
+
+export class UpdateEnrollmentDto extends PartialType(CreateEnrollmentDto) {
+  @IsOptional()
+  @Type(() => Date) // <-- Convierte el string del JSON a Date automáticamente
+  @IsDate({ message: 'El campo date debe ser una fecha válida' })
+  readonly date: Date;
+
+  @IsOptional()
+  @IsString({ message: 'El campo folio debe ser un string' })
+  readonly folio: string;
+
+  @IsOptional()
+  readonly schoolPeriod: SchoolPeriodEntity;
+}
